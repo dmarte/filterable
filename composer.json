@@ -1,0 +1,26 @@
+{
+    "name": "dmarte/filterable",
+    "description": "Easy to use package to filter eloquent nor scout records.",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Delvi Marte",
+            "email": "delvi.marte@gmail.com"
+        }
+    ],
+    "minimum-stability": "stable",
+    "require": {},
+    "autoload": {
+        "psr-4": {
+            "Dmarte\\Filterable": "src/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Dmarte\\Filterable"
+            ]
+        }
+    }
+}
