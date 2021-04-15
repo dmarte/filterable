@@ -1,6 +1,6 @@
 <?php
 
-namespace App;
+namespace Dmarte\Filterable;
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
