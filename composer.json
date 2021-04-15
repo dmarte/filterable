@@ -1,5 +1,6 @@
 {
     "name": "dmarte/filterable",
+    "version": "v1.0.1",
     "description": "Easy to use package to filter Laravel Eloquent records.",
     "type": "library",
     "license": "MIT",
@@ -13,14 +14,7 @@
     "require": {},
     "autoload": {
         "psr-4": {
-            "Dmarte\\Filterable": "src/"
-        }
-    },
-    "extra": {
-        "laravel": {
-            "providers": [
-                "Dmarte\\Filterable"
-            ]
+            "Dmarte\\Filterable\\": "src/"
         }
     }
 }

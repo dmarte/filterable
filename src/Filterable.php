@@ -50,8 +50,8 @@ trait Filterable
         return static::qualifiedResultType($request, $query, $perPage);
     }
 
-    protected static function qualifiedResultType(Request $request, Builder|\Laravel\Scout\Builder $query, $perPage = 15)
-    {
+    protected static function qualifiedResultJson(Request $request, Builder|\Laravel\Scout\Builder $query, $perPage = 15) {
+
         if (!class_exists(static::qualifiedResource()) && !$request->boolean(static::keyNameOnRequestForPaginator())) {
             return $query->take($perPage)->get();
         }
@@ -65,6 +65,19 @@ trait Filterable
         }
 
         return static::qualifiedResource()::collection($query->paginate($perPage));
+    }
+
+    protected static function qualifiedResultType(Request $request, Builder|\Laravel\Scout\Builder $query, $perPage = 15)
+    {
+        if ($request->wantsJson()) {
+            return static::qualifiedResultJson($request, $query, $perPage);
+        }
+
+        if (!$request->boolean(static::keyNameOnRequestForPaginator())) {
+            return $query->take($perPage)->get();
+        }
+
+        return $query->paginate($perPage);
     }
 
     protected static function qualifiedResource(): string
