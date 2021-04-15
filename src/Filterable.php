@@ -47,6 +47,19 @@ trait Filterable
 
         $perPage = $request->get('per_page', $model->getPerPage());
 
+        return static::qualifiedResultType($request, $query, $perPage);
+    }
+
+    protected static function qualifiedResultType(Request $request, Builder|\Laravel\Scout\Builder $query, $perPage = 15)
+    {
+        if (!class_exists(static::qualifiedResource()) && !$request->boolean(static::keyNameOnRequestForPaginator())) {
+            return $query->take($perPage)->get();
+        }
+
+        if (!class_exists(static::qualifiedResource()) && $request->boolean(static::keyNameOnRequestForPaginator())) {
+            return $query->paginate($perPage);
+        }
+
         if (!$request->boolean(static::keyNameOnRequestForPaginator())) {
             return static::qualifiedResource()::collection($query->take($perPage)->get());
         }
@@ -96,6 +109,9 @@ trait Filterable
     }
 
     /**
+     * Indicate the list of columns that should
+     * be allowed to search with full text functionality.
+     *
      * @return array
      */
     protected static function fullTextColumns(): array

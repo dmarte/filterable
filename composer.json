@@ -1,6 +1,6 @@
 {
     "name": "dmarte/filterable",
-    "description": "Easy to use package to filter eloquent nor scout records.",
+    "description": "Easy to use package to filter Laravel Eloquent records.",
     "type": "library",
     "license": "MIT",
     "authors": [
