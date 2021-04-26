@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Log;
 use Laravel\Scout\Searchable;
 
 /**
@@ -17,7 +18,6 @@ use Laravel\Scout\Searchable;
 trait Filterable
 {
     use Searchable;
-
 
     /**
      * The main entry point to filter your models.
@@ -37,12 +37,8 @@ trait Filterable
 
         $hasSoftDeletes = property_exists(static::class, 'forceDeleting');
 
-        if ($hasSoftDeletes) {
-            $query->withGlobalScope('soft_deletes', new SoftDeletingScope());
-        }
-
-        if ($request->boolean('with_trashed')) {
-            $query->withTrashed();
+        if ($hasSoftDeletes && !$request->boolean('with_trashed')) {
+            $query->withGlobalScope('soft_deletes',new SoftDeletingScope());
         }
 
         $perPage = $request->get('per_page', $model->getPerPage());
