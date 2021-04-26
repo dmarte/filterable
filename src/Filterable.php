@@ -37,7 +37,7 @@ trait Filterable
 
         $hasSoftDeletes = property_exists(static::class, 'forceDeleting');
 
-        if ($hasSoftDeletes && !$request->boolean('with_trashed')) {
+        if ($hasSoftDeletes && !$request->boolean('with_trashed') && !config('scout.driver')) {
             $query->withGlobalScope('soft_deletes',new SoftDeletingScope());
         }
 
