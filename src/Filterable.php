@@ -6,8 +6,8 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\Log;
 use Laravel\Scout\Searchable;
 
 /**
@@ -27,9 +27,9 @@ trait Filterable
      *
      * @param  \Illuminate\Http\Request  $request
      *
-     * @return JsonResource
+     * @return JsonResource|Collection
      */
-    public static function filter(Request $request): JsonResource
+    public static function filter(Request $request): JsonResource|Collection|LengthAwarePaginator
     {
         $model = new static();
 
@@ -38,7 +38,7 @@ trait Filterable
         $hasSoftDeletes = property_exists(static::class, 'forceDeleting');
 
         if ($hasSoftDeletes && !$request->boolean('with_trashed') && !config('scout.driver')) {
-            $query->withGlobalScope('soft_deletes',new SoftDeletingScope());
+            $query->withGlobalScope('soft_deletes', new SoftDeletingScope());
         }
 
         $perPage = $request->get('per_page', $model->getPerPage());
@@ -46,7 +46,8 @@ trait Filterable
         return static::qualifiedResultType($request, $query, $perPage);
     }
 
-    protected static function qualifiedResultJson(Request $request, Builder|\Laravel\Scout\Builder $query, $perPage = 15) {
+    protected static function qualifiedResultJson(Request $request, Builder|\Laravel\Scout\Builder $query, $perPage = 15)
+    {
 
         if (!class_exists(static::qualifiedResource()) && !$request->boolean(static::keyNameOnRequestForPaginator())) {
             return $query->take($perPage)->get();
@@ -69,7 +70,7 @@ trait Filterable
             return static::qualifiedResultJson($request, $query, $perPage);
         }
 
-        if (!$request->boolean(static::keyNameOnRequestForPaginator())) {
+        if ($request->filled(static::keyNameOnRequestForPaginator()) && !$request->boolean(static::keyNameOnRequestForPaginator())) {
             return $query->take($perPage)->get();
         }
 
