@@ -4,7 +4,9 @@ A Laravel library to filter Eloquent or Scout database records.
 
 1. [How it works](#how-it-works)
 2. [Implementation](#implementation)
-3. 
+3. [Reserved query string parameters](#reserved-query-string-parameters)
+4. [Limiting the Full-Text columns check](#limiting-the-full-text-columns-check)
+5. [Filterable queries](#filterable-queries)
 
 ### How it works
 
@@ -61,6 +63,7 @@ In order to change the expected results in search, filterable check with params 
 |`per_page`|15| Determine the number or records to get in the query.|`?per_page=20`
 |`with`|null| An `array` or `string` with the list of model relations to include.|`with[]=relation1&with[]=relation2`
 |`search`|null| A string to activate the full-text search support.|`?search=John%sdoe`
+
 ### Limiting the Full-Text columns check
 
 By specifying the list of columns that should be full-text searchable you can globally search based on generic criterea.
