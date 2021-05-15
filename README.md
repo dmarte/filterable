@@ -77,3 +77,30 @@ protected static function fullTextColumns(): array
     ];
 }
 ```
+
+### Filterable queries
+
+You could create your own logic for each column when you override the method `filterableQueries`.
+
+#### **IMPORTANT**
+You must be sure to return an instance of `Illuminate\Support\Collection` with each callback.
+The filterable engine will check the "key" on the collection to match the request "key", then will expect each value should be a callback function that perform your desired query.
+
+#### Here is an example
+
+```php
+    // IN YOUR MODEL 
+    protected function filterableQueries(): Collection
+    {
+        return collect([
+            'team_id'    => fn(Builder $query, $column, $value) => $query->where($column, $value),
+            'emitted_at' => function (Builder $query, $column, $value) {
+                if (is_array($value)) {
+                    return $query->whereBetween($column, $value);
+                }
+
+                return $query->where($column, $value);
+            },
+        ]);
+    }
+```
