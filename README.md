@@ -1,6 +1,10 @@
 # Filterable
 
-A Laravel library to filter Eloquent or Scout records with an easy to use implementation.
+A Laravel library to filter Eloquent or Scout database records.
+
+1. [How it works](#how-it-works)
+2. [Implementation](#implementation)
+3. 
 
 ### How it works
 
@@ -14,7 +18,7 @@ IMPORTANT NOTE:
 Filterable will return a JsonResource if the HTTP Accept is present and is application/json.
 ```
 
-#### Implementation example
+#### Implementation
 
 ```php
 // IN YOUR ELOQUENT MODEL
@@ -47,7 +51,7 @@ class ContactController extends Controller {
 }
 ```
 
-### Supported `query string` parameters
+### Reserved `query string` parameters
 
 In order to change the expected results in search, filterable check with params you have in your request.
 
