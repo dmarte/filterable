@@ -1,6 +1,12 @@
 # Filterable
 
-A Laravel library to filter Eloquent or Scout records with an easy to use implementation.
+A Laravel library to filter Eloquent or Scout database records.
+
+1. [How it works](#how-it-works)
+2. [Implementation](#implementation)
+3. [Reserved query string parameters](#reserved-query-string-parameters)
+4. [Limiting the Full-Text columns check](#limiting-the-full-text-columns-check)
+5. [Filterable queries](#filterable-queries)
 
 ### How it works
 
@@ -14,7 +20,7 @@ IMPORTANT NOTE:
 Filterable will return a JsonResource if the HTTP Accept is present and is application/json.
 ```
 
-#### Implementation example
+#### Implementation
 
 ```php
 // IN YOUR ELOQUENT MODEL
@@ -47,7 +53,7 @@ class ContactController extends Controller {
 }
 ```
 
-### Supported `query string` parameters
+### Reserved `query string` parameters
 
 In order to change the expected results in search, filterable check with params you have in your request.
 
@@ -57,6 +63,7 @@ In order to change the expected results in search, filterable check with params 
 |`per_page`|15| Determine the number or records to get in the query.|`?per_page=20`
 |`with`|null| An `array` or `string` with the list of model relations to include.|`with[]=relation1&with[]=relation2`
 |`search`|null| A string to activate the full-text search support.|`?search=John%sdoe`
+
 ### Limiting the Full-Text columns check
 
 By specifying the list of columns that should be full-text searchable you can globally search based on generic criterea.
@@ -76,4 +83,31 @@ protected static function fullTextColumns(): array
         //...
     ];
 }
+```
+
+### Filterable queries
+
+You could create your own logic for each column when you override the method `filterableQueries`.
+
+#### **IMPORTANT**
+You must be sure to return an instance of `Illuminate\Support\Collection` with each callback.
+The filterable engine will check the "key" on the collection to match the request "key", then will expect each value should be a callback function that perform your desired query.
+
+#### Here is an example
+
+```php
+    // IN YOUR MODEL 
+    protected function filterableQueries(): Collection
+    {
+        return collect([
+            'team_id'    => fn(Builder $query, $column, $value) => $query->where($column, $value),
+            'emitted_at' => function (Builder $query, $column, $value) {
+                if (is_array($value)) {
+                    return $query->whereBetween($column, $value);
+                }
+
+                return $query->where($column, $value);
+            },
+        ]);
+    }
 ```
