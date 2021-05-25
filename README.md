@@ -52,6 +52,28 @@ class ContactController extends Controller {
     }
 }
 ```
+### Pagination
+Filterable package by default will return a **collection of records**, if you would like to get the paginator format you must include the query string `paginator=true` in the request.
+
+
+With `?paginator=false` response will be:
+```json
+[]
+```
+
+With `?paginator=true` response will be:
+```typescript
+{
+ "data": Array,
+ "meta": {
+  "per_page": Number
+  "current_page": Number
+  "last_page": Number
+  "from": Number
+  "to": Number
+ }
+}
+```
 
 ### Reserved `query string` parameters
 
@@ -63,6 +85,7 @@ In order to change the expected results in search, filterable check with params 
 |`per_page`|15| Determine the number or records to get in the query.|`?per_page=20`
 |`with`|null| An `array` or `string` with the list of model relations to include.|`with[]=relation1&with[]=relation2`
 |`search`|null| A string to activate the full-text search support.|`?search=John%sdoe`
+|`paginator`|false|Enable or disable the paginator format in data response.
 
 ### Limiting the Full-Text columns check
 
