@@ -11,7 +11,9 @@
         }
     ],
     "minimum-stability": "stable",
-    "require": {},
+    "require": {
+        "laravel/scout": "^8.6"
+    },
     "autoload": {
         "psr-4": {
             "Dmarte\\Filterable\\": "src/"
