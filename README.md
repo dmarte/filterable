@@ -1,6 +1,6 @@
 # Filterable
 
-A Laravel library to filter Eloquent or Scout database records.
+A Laravel library to handle filters for Eloquent models or Scout database records with a single API.
 
 1. [How it works](#how-it-works)
 2. [Implementation](#implementation)
