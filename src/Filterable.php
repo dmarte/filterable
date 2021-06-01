@@ -46,6 +46,13 @@ trait Filterable
         return static::qualifiedResultType($request, $query, $perPage);
     }
 
+    public static function filterQuery(Request $request): Builder
+    {
+        $model = new static();
+
+        return $model->buildEloquentSearch($request);
+    }
+
     protected static function qualifiedResultJson(Request $request, Builder|\Laravel\Scout\Builder $query, $perPage = 15)
     {
 
