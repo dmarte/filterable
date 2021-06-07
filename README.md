@@ -4,9 +4,11 @@ A Laravel library to handle filters for Eloquent models or Scout database record
 
 1. [How it works](#how-it-works)
 2. [Implementation](#implementation)
-3. [Reserved query string parameters](#reserved-query-string-parameters)
-4. [Limiting the Full-Text columns check](#limiting-the-full-text-columns-check)
-5. [Filterable queries](#filterable-queries)
+3. [Pagination](#pagination)
+5. [Reserved query string parameters](#reserved-query-string-parameters)
+6. [Limiting the Full-Text columns check](#limiting-the-full-text-columns-check)
+7. [Filterable queries](#filterable-queries)
+8. [Resource response](#resource-response)
 
 ### How it works
 
@@ -132,5 +134,21 @@ The filterable engine will check the "key" on the collection to match the reques
                 return $query->where($column, $value);
             },
         ]);
+    }
+```
+
+#### Resource response
+You could change the resource class used as response using the function `qualifiedResource`. With this `static` function you return the path of your resource.
+
+> **NOTE**
+> By default it will take the name of the model with the suffix `Resource`. Eg. for `\App\Models\User` model will try to find `\App\Http\Resources\UserResource`.
+
+
+You can change this behavior overriding that function.
+
+```php
+    protected static function qualifiedResource(): string
+    {
+        return \App\Http\Resources\ModelResource::class;
     }
 ```
