@@ -225,15 +225,11 @@ trait Filterable
      */
     protected function buildEloquentSort(Request $request, Collection $fields, Builder $query): void
     {
-        $sortByColumn = $request->get(static::keyNameOnRequestForSortBy(), static::keyNameOnRequestForSortBy());
+        $sortByColumn = $request->get(static::keyNameOnRequestForSortBy());
         $sortByDirection = $request->boolean(static::keyNameOnRequestForSortDesc()) ? 'desc' : 'asc';
 
         if (is_array($sortByColumn)) {
             $sortByColumn = current($sortByColumn);
-        }
-
-        if (!$fields->offsetExists($sortByColumn)) {
-            $sortByColumn = $this->getKeyName();
         }
 
         if (!str_contains($sortByColumn, '.')) {
