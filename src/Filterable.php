@@ -158,6 +158,16 @@ trait Filterable
     }
 
     /**
+     * Please read the limitations on scout where clauses.
+     *
+     * @link https://laravel.com/docs/8.x/scout#where-clauses
+     * @return \Illuminate\Support\Collection
+     */
+    protected function filterableScoutQueries() {
+        return collect();
+    }
+
+    /**
      * @param  \Illuminate\Http\Request  $request
      *
      * @return \Laravel\Scout\Builder
@@ -165,26 +175,23 @@ trait Filterable
     protected function buildScoutSearch(Request $request): \Laravel\Scout\Builder
     {
         $query = static::search($request->get(static::keyNameOnRequestForFullTextSearch()));
-        $fields = $this->filterableQueries()->keys();
+        $fields = $this->filterableScoutQueries();
         $values = $request->only($fields->keys()->toArray());
 
-        foreach ($values as $field => $value) {
-            if (!is_string($value) || !is_numeric($value)) {
-                continue;
-            }
-            $query->where($field, $value);
-        }
+        foreach ($values as $field => $value) ($fields->offsetGet($field))($query, $field, $value);
 
-        return $query;
+        $this->buildEloquentSort($request, $fields, $query);
+
+        return $this->buildEloquentQuery($query, $request);
     }
 
     /**
      * @param  \Illuminate\Database\Eloquent\Builder  $query
      * @param  Request  $request
      *
-     * @return \Illuminate\Database\Eloquent\Builder
+     * @return \Illuminate\Database\Eloquent\Builder|\Laravel\Scout\Builder|\Algolia\ScoutExtended\Builder
      */
-    protected function buildEloquentQuery(Builder $query, Request $request): Builder
+    protected function buildEloquentQuery(Builder|\Laravel\Scout\Builder $query, Request $request)
     {
         return $query;
     }
@@ -192,9 +199,9 @@ trait Filterable
     /**
      * @param  \Illuminate\Http\Request  $request
      *
-     * @return \Illuminate\Database\Eloquent\Builder
+     * @return \Illuminate\Database\Eloquent\Builder|\Algolia\ScoutExtended\Builder
      */
-    protected function buildEloquentSearch(Request $request): Builder
+    protected function buildEloquentSearch(Request $request)
     {
         $query = $this->newModelQuery();
         $fields = $this->filterableQueries();
@@ -221,9 +228,9 @@ trait Filterable
     /**
      * @param  \Illuminate\Http\Request  $request
      * @param  \Illuminate\Support\Collection  $fields
-     * @param  \Illuminate\Database\Eloquent\Builder  $query
+     * @param  \Illuminate\Database\Eloquent\Builder|\Laravel\Scout\Builder  $query
      */
-    protected function buildEloquentSort(Request $request, Collection $fields, Builder $query): void
+    protected function buildEloquentSort(Request $request, Collection $fields, Builder|\Laravel\Scout\Builder $query): void
     {
         $sortByColumn = $request->get(static::keyNameOnRequestForSortBy(), $this->getKeyName());
         $sortByDirection = $request->boolean(static::keyNameOnRequestForSortDesc()) ? 'desc' : 'asc';
