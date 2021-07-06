@@ -152,3 +152,30 @@ You can change this behavior overriding that function.
         return \App\Http\Resources\ModelResource::class;
     }
 ```
+
+#### Filter by multiple models
+Useful for global searches you could create a multi-model filter.
+
+```php
+
+        // Add column filter that will be applied to all models.
+        $request->merge([
+            'team_id' => $request->user()->team_id,
+        ]);
+
+        $engine = new FilterableMultiple(
+            models: [
+            Service::class,
+            Product::class,
+        ],
+            request: $request
+        );
+        
+        // Customize the query used for a given model
+        $engine->query(Service::class, function (Builder $query) {
+            $query->where('kind', 'service_custome_value');
+        });
+
+        // Return the collection
+        return $engine->get()
+```
