@@ -99,6 +99,10 @@ trait Filterable
         return 'search';
     }
 
+    protected static function KeyNameOnRequestForWhereNull(): string {
+        return 'whereNull';
+    }
+
     /**
      * Get the key used to catch the value of the column to be sorted.
      *
@@ -151,8 +155,8 @@ trait Filterable
             ->mapWithKeys(fn($value) => [
                 $value => fn(
                     Builder $query,
-                    $column,
-                    $value
+                            $column,
+                            $value
                 ) => $query->where("{$this->getTable()}.{$column}", $value),
             ]);
     }
@@ -222,7 +226,18 @@ trait Filterable
 
         $this->searchableBuildFullTextSearch($request, $query);
 
+        $this->buildEloquentWhereNullSearch($request, $query);
+
         return $this->buildEloquentQuery($query, $request);
+    }
+
+    /**
+     * @param Request $request
+     * @param Builder $query
+     */
+    protected function buildEloquentWhereNullSearch(Request $request, Builder $query): void {
+        $whereNullColumns = $request->get(static::KeyNameOnRequestForWhereNull(), []);
+        $query->whereNull($whereNullColumns);
     }
 
     /**
